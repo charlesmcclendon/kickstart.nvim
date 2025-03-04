@@ -203,6 +203,32 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- [[ Customized options - crm ]]
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'go',
+  callback = function()
+    -- Make it look like 4 spaces but actually use tabs
+    vim.bo.expandtab = false -- Use tabs
+    vim.bo.shiftwidth = 4 -- Number of spaces to use for each step of (auto)indent
+    vim.bo.tabstop = 4 -- Number of spaces that a  in the file counts for
+    vim.bo.softtabstop = 4 -- Number of spaces that a  counts for while performing editing operations
+  end,
+})
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'c', 'cpp' },
+  callback = function()
+    -- Make it look like 4 spaces but actually use tabs
+    vim.bo.expandtab = true -- Use spaces instead of tabs
+    vim.bo.shiftwidth = 4 -- Display tabs as 4 spaces
+    vim.bo.tabstop = 4
+    vim.bo.softtabstop = 4
+
+    -- Debug
+    print('C/CPP settings applied: expandtab=' .. tostring(vim.bo.expandtab))
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -228,7 +254,9 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+
+  -- NOTE Disabling vim-sleuth
+  --'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -617,7 +645,7 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
+        gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -876,6 +904,9 @@ require('lazy').setup({
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
+
+      -- Customized - crm
+      require('mini.pairs').setup()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
